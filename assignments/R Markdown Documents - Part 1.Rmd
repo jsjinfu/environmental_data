@@ -1,0 +1,22 @@
+---
+title: "R Markdown Documents - Part 1"
+subtitle: "Analysis of Environmental Data"
+author: Jordan Smith
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+# Introduction
+My name is **Jordan Smith** and I am currently a _Masters_ student in the _Plant and Soil Sciences_ program.
+
+# Concepts List
+1. RStudio Basics
+2. Making Graphs with R and RStudio
+3. Coding Basics
+
+# Course List
+* Plant Biotech & Tissue Culture
+* Marching Band
+* Cellular & Molecular Biology

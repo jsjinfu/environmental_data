@@ -1,0 +1,31 @@
+---
+title: "In-Class Models 2: Model Coefficients"
+author: "Jordan Smith"
+date: "2022-11-08"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Mean of specific Subset of Data Using Iris
+```{r}
+iris_set = droplevels(subset(iris, Species == "setosa"))
+iris_virg = droplevels(subset(iris, Species == "virginica"))
+iris_vers = droplevels(subset(iris, Species == "versicolor"))
+
+# Sepal Length Mean of Iris setosa data:
+mean(iris_set$Sepal.Length)
+```
+
+# Boxplot of setosa, versicolor, and virginica sepal length
+```{r}
+boxplot(iris_set$Sepal.Length, iris_vers$Sepal.Length, iris_virg$Sepal.Length,
+        main = "Boxplot of Sepal Length Dependent on Species",
+        xlab = "Species",
+        ylab = "Sepal Length")
+```
+
+## Normality Test
+```{r}

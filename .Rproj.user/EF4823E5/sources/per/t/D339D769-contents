@@ -1,0 +1,124 @@
+---
+title: "Data Exploration and Deterministic Functions"
+author: "Jordan Smith"
+date: "2022-10-07"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, echo = FALSE}
+require("here")
+dat_habitat = read.csv(here("data", "hab.sta.csv"))
+```
+
+# {.tabset}
+
+## 1. Terrain Histograms
+
+```{r Elevation/Aspect/Slope, echo = FALSE, fig.width = 5, fig.height = 10}
+par(mfrow = c(3,1))
+hist(dat_habitat$elev,
+     main = "Elevation Histogram",
+     xlab = "Elevation (m)",
+     ylab = "Frequency")
+hist(dat_habitat$slope,
+     main = "Elevation Histogram",
+     xlab = "Slope (degrees)",
+     ylab = "Frequency")
+hist(dat_habitat$slope,
+     main = "Slope Histogram",
+     xlab = "Slope (%)",
+     ylab = "Frequency")
+```
+
+
+## 2. Elevation Histogram Interpretation
+  
+  This histogram shows that there highest number of sampling sites occur just under the 400 m mark and there seem to be about half above and below this elevation. Even so, there are more values farther away from the mean on the higher end of the graph than the lower, telling us that even though the numbers are the same above and below, there are more "higher" sampling sites than lower. There also seems to be a more uniform decrease in sampling sites as the elevation goes down compared to those above the mean elevation. Towards the higher elevations, there is a steep reduction in number of sampling sites but they give a higher range in elevation values.
+  
+## 3. Slope Units
+
+The slope is measured in % increase/decrease, ranging from 0-110 degrees.
+
+## 4. Slope Histogram Interpretation
+
+  Looking at the slope histogram, the mean seems to lie just above the 40 mark, with data points both higher and lower than this value. There seem to be more slope points below the mean than above due to the sharp decrease in frequency as the slope goes above 80% Most sampling sites do not lie flat since there are only around 40 sites that lie on 0%, while the rest are on at least a slight slope. There does seem to be an even mixture of steep and shallow, where the majority of the sampling sites lie between 30 and 70%.
+
+## 5. Aspect
+
+  Aspect is defined as the orientation of the slope, measured clockwise from a single point. It is measured on a circular scale ranging from 0-360 where 0 represents north and every addition of 90 degrees moves around the compass in a clockwise fashion.
+
+## 6. Aspect Histogram Interpretation
+
+  Looking at the histogram that represents the aspect of the sampling sites, it seems like there is an equal distribution of sampling sites around the central point, with a small break at 360 degrees. This can be offset since 360 and 0 are technically the same direction so some of the points at the lower end make up for the decrease at the higher end. There does seem to be a decrease in sampling sites around the 180 mark, telling us that there are less sites in the southern-facing direction. There is also a slight increase in site frequency at the 275 mark, showing a slightly higher number of sites on the western-facing side.
+
+## 7. Terrain/Basal Area Linear Models
+
+```{r, echo = FALSE, fig.height = 10}
+
+line_point_slope = function(x, x1, y1, slope)
+{
+  get_y_intercept = 
+    function(x1, y1, slope) 
+      return(-(x1 * slope) + y1)
+  
+  linear = 
+    function(x, yint, slope) 
+      return(yint + x * slope)
+  
+  return(linear(x, get_y_intercept(x1, y1, slope), slope))
+}
+
+dat_habitat_elev = c(dat_habitat$elev)
+dat_habitat_aspect = c(dat_habitat$aspect)
+dat_habitat_slope = c(dat_habitat$slope)
+dat_habitat_basal = c(dat_habitat$ba.tot)
+par(mfrow = c(3, 2))
+elevation_plot = plot(dat_habitat_elev,
+    dat_habitat_basal,
+     main = "Basal Area and Elevation",
+     xlab = "Elevation (m)",
+     ylab = "Total Basal Area (m^2/ha)")
+elev_x_mean = mean(dat_habitat$elev)
+elev_y_mean = mean(dat_habitat$ba.tot)
+points(x = elev_x_mean, y = elev_y_mean, col = "red")
+curve(line_point_slope(x, elev_x_mean, elev_y_mean, 0.004003), add = TRUE, col = "blue")
+
+slope_plot = plot(dat_habitat_slope,
+    dat_habitat_basal,
+     main = "Basal Area and Slope",
+     xlab = "Slope (%)",
+     ylab = "Total Basal Area (m^2/ha)")
+slope_x_mean = mean(dat_habitat$slope)
+slope_y_mean = mean(dat_habitat$ba.tot)
+points(x = slope_x_mean, y = slope_y_mean, col = "red")
+curve(line_point_slope(x, slope_x_mean, slope_y_mean, 0.05235), add = TRUE, col = "blue")
+
+plot(dat_habitat_aspect, dat_habitat_basal,
+     main = "Basal Area and Aspect",
+     xlab = "Aspect (degrees)",
+     ylab = "Total Basal Area(m^2/ha")
+aspect_x_mean = mean(dat_habitat$aspect)
+aspect_y_mean = mean(dat_habitat$ba.tot)
+points(x = aspect_x_mean, y = aspect_y_mean, col = "red")
+curve(line_point_slope(x, aspect_x_mean, aspect_y_mean, 0.01349), add = TRUE, col = "blue")
+
+hist(dat_habitat$elev,
+     main = "Elevation Histogram",
+     xlab = "Elevation (m)",
+     ylab = "Frequency")
+hist(dat_habitat$slope,
+     main = "Elevation Histogram",
+     xlab = "Slope (degrees)",
+     ylab = "Frequency")
+hist(dat_habitat$slope,
+     main = "Slope Histogram",
+     xlab = "Slope (%)",
+     ylab = "Frequency")
+```
+
+## 8. Terrain/Basal Modal Interpretation
+All three of these graphs look similar where they all have a relatively shallow trend line, indicating to us that there is little to no relationship between terrain and basal area. Along with this, the trends for the data don't take into account the handful of outliers that show up with high levels of basal area. The only graph that has somewhat of a trend is basal area and elevation where there is a lower concentration of trees as the elevation increases over 750 m.

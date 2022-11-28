@@ -1,0 +1,68 @@
+---
+title: "Week 6 Questions"
+author: "Jordan Smith"
+date: "2022-10-11"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# {.tabset}
+
+## Question 1
+In the baseline scenario of seed predation, if there were no relationship between the seeds being removed across different species, there would be an equal predation rate when comparing the various species. Using the example of seed predation, a null hypothesis can be determined as no relationship between the predation rates of the two species of seeds. 
+
+## Question 2
+
+``` {r}
+rm(list = ls())
+
+pol_n_predation = 26
+pol_n_no_predation = 184
+pol_n_total = 210
+pol_predation_rate = 0.124
+
+psd_n_predation = 25
+psd_n_no_predation = 706
+psd_n_total = 731
+psd_predation_rate = 0.034
+
+print(
+  paste0(
+    "The seed predation rate for Polyscias fulva is: ",
+    round(pol_predation_rate, digits = 3))) 
+
+print(
+  paste0(
+    "The seed predation rate for Pseudospondias microcarpa is: ",
+    round(psd_predation_rate, digits = 3)))
+```
+
+## Question 3
+```{r}
+#pol and psd vectors
+pol = c(26, 184, 210, 0.124)
+psd = c(25, 706, 731, 0.034)
+pol_psd = c(pol, psd)
+
+#table creation
+seed_pred_table = matrix(pol_psd, byrow = TRUE, nrow = 2)
+
+#table labels
+seed_row_names = c("Polyscias fulva (pol)", "Pseudospondias microcarpa (psd)")
+seed_col_names = c("Any Taken", "None Taken", "N", "Predation Rate")
+rownames(seed_pred_table) = seed_row_names
+colnames(seed_pred_table) = seed_col_names
+
+#final table
+seed_pred_table
+```
+
+## Question 4
+
+``` {r}
+#Ratio of Seed Predation Proportions = proportion for pol/proportion for psd
+0.124/0.034
+```
