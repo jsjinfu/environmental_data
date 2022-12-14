@@ -1,0 +1,226 @@
+---
+title: "final_R_reference.Rmd"
+author: "Jordan Smith"
+date: "2022-11-30"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# R Reference Guide {.tabset .tabset-pills}
+
+## Loading Data and Packages
+**library() and require() functions - both load packages into R**
+```{r}
+require("here")
+library("palmerpenguins")
+
+ginkgo_df = read.csv(here("data", "ginkgo_data_2022.csv"))
+```
+
+## Data Structures
+**c() function - combines its elements into a vector.**
+
+- all data must be the same type (characters and numeric cannot be combined in one c()).
+```{r}
+# Numeric Vector
+numeric_vec = c(1, 10, 100, 1000, 10000)
+
+# Character Vector
+charac_vec = c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday")
+```
+
+- Typing the name of the vector or using the print() function will output the contents of the vector.
+
+```{r}
+numeric_vec
+
+print(charac_vec)
+```
+
+**length() function - specifies the length of a vector or the number of elements in a list or matrix.**
+```{r}
+length(numeric_vec)
+
+ex_matrix = matrix(1:9, byrow = TRUE, nrow = 3)
+length(ex_matrix)
+```
+
+**matrix() function - combines elements into a matrix (2D method of grouping elements into rows and columns).**
+
+- can be creating using the matrix() function directly or creating a new matrix using information contained within a vector. The code below will both form a matrix containing values 1-9 with 3 rows and 3 columns
+```{r}
+# Using the matrix() function directly
+ex_matrix = matrix(1:9, byrow = TRUE, nrow = 3)
+
+# Making a matrix from a vector(s)
+vec_one = c(1, 2, 3)
+vec_two = c(4, 5, 6)
+vec_three = c(7, 8, 9)
+vector = c(vec_one, vec_two, vec_three)
+matrix = matrix(vector, byrow = TRUE, nrow = 3)
+
+#   First Argument - collection of elements that will be arranged
+#   Second Argument - if the matrix will be defined by rows (byrow = TRUE) or columns (byrow = FALSE)
+#  Third Argument - indicates the number of rows/columns the matrix will have
+
+```
+
+**data.frame() function - combines the properties of matrices and lists and organizes data into different categories that can be easily identified and named.**
+
+- can have different types of data in it but each column must contain the same type of data.
+
+- nrow()/ncol() function - returns the number of rows/columns present in the specified data frame.
+```{r}
+nrow(ginkgo_df)
+ncol(ginkgo_df)
+```
+
+- dim() function - returns the dimensions of the specified data frame.
+```{r}
+dim(ginkgo_df)
+```
+
+## Subsetting
+
+**"$" is used to subset different columns in data frames.**
+```{r}
+# Subsetting the data frame by name using $ (notch_depth)
+ginkgo_df$notch_depth
+```
+
+**"[]" is used to specify positions within the data frame without knowing the names of each column in the format [row position, column position].**
+```{r}
+# Selecting the first row of the ginkgo data
+ginkgo_df[1,0]
+
+# Selecting the first element in row 2, column 3 of the ginkgo data
+ginkgo_df[2,3]
+
+#selecting the third column of the ginkgo data
+ginkgo_df[0,3]
+```
+
+**subset() function - another way of subsetting the data with the capability of specifying the parameters of values to keep/drop.**
+```{r}
+require(palmerpenguins)
+
+# Retrieving all data on the Adelie penguins
+adelie_penguins = subset(penguins, species == "Adelie")
+head(adelie_penguins)
+```
+
+## Numerical Data Exploration
+
+**summary() function - gives a summary of the data using a variety of model fit functions including the minimum, median, mean, maximum, 1st qualtile, and the 3rd quantile.**
+```{r}
+summary(ginkgo_df)
+```
+
+**mean() function - gives the average for all of the entries for a given group. Must all be numerical data entries.**
+```{r}
+# Calculating the average body mass for the penguins data
+mean(ginkgo_df$max_width)
+```
+
+**sd() function - gives the standard deviation for all of the entries for a given group. Must all be numerical data entries.**
+```{r}
+# Calculating the standard deviation of the body mass for the penguins data
+sd(ginkgo_df$max_width)
+```
+
+## Graphical Data Exploration
+```{r}
+# Scatterplot of ginkgo max leaf depth (x) and max width (y)
+# col - describes the color of a point or plot (1 = black, 2 = red, 3 = green)
+# pch - describes the shape of each point in a scatterplot (online guides are available)
+# cex - describes the point size in comparison to the default (1)
+# main - specifies the main title on a graph
+# xlab - specifies the x axis title on a graph
+# ylab - specifies the y axis title on a graph
+# xlim - specifies the x axis limit using a vector of 2 elements
+# ylim - specifies teh y axis limit using a vector of 2 elements
+plot(ginkgo_df$max_width ~ ginkgo_df$max_depth,
+     col = 2,
+     pch = 10,
+     cex = 0.9,
+     main = "Ginkgo Leaf Data",
+     xlab = "Max Leaf Depth",
+     ylab = "Max Leaf Width",
+     xlim = c(0,100),
+     ylim = c(0, 125))
+
+# Histogram of penguin flipper length
+# breaks - describes how many bins the data will be separated into in a histogram
+hist(penguins$flipper_length_mm,
+     main = "Penguins Flipper Length",
+     xlab = "Flipper Length (mm)",
+     breaks = 50)
+
+# Boxplot of ginkgo petiole lengths
+boxplot(ginkgo_df$petiole_length,
+        main = "Ginkgo Petiole Lengths",
+        ylab = "Length (mm)")
+
+# Boxplot of ginkgo notch depth conditioned on seed presence/absence
+boxplot(ginkgo_df$notch_depth ~ ginkgo_df$seeds_present,
+        main = "Ginkgo Notch Depth by Seed Presence",
+        xlab = "Seeds Present",
+        ylab = "Notch Depth (mm)")
+
+# 4-Panel figure of Histograms
+# par(mfrow) - describes the specifications for a multi-panel figure where the vector specifies c(#rows, #columns)
+par(mfrow = c(2,2))
+hist(penguins$bill_depth_mm,
+     main = "Penguins Bill Depth Histogram",
+     xlab = "Depth (mm)")
+hist(penguins$bill_length_mm,
+     main = "Penguins Bill Length Histogram",
+     xlab = "Length (mm)")
+hist(penguins$body_mass_g,
+     main = "Penguin Body Mass Histogram",
+     xlab = "Body Mass (g)")
+hist(ginkgo_df$max_width,
+     main = "Ginkgo Max Width Histogram",
+     xlab = "Width (mm)")
+```
+
+## Distribution Functions
+
+**dnorm() function - gives the probability of observing a specified value from a normally distributed population.**
+```{r}
+# Finding the probability of observing the value 1.2 from a normally distributed population with a mean = 2 and a standard deviation = 2
+dnorm(1.2, mean = 2, sd = 2)
+```
+
+**pnorm() function - gives the probability of observing on or below a specified value from a normally distributed population.**
+```{r}
+# Finding the probability of observing a value less than 1.2 from a normally distributed population with a mean = 2 and a standard deviation = 2
+pnorm(1.2, mean = 2, sd = 2)
+```
+
+**qnorm() function - gives the value that is the specified percentile from a normally distributed population.**
+```{r}
+# Finding the value that is the 85th percentile of a normal distribution with a mean = 70 and standard deviation = 3
+qnorm(0.85, mean = 70, sd = 3)
+```
+
+**dbinom() function - gives the probability of getting a specific number of successes based on the given distribution parameters.**
+```{r}
+# Finding the probability of observing a count of exactly 3 successes in a binomial distribution with parameters n = 4 and p = 0.75
+dbinom(3, size = 4, prob = 0.75)
+```
+
+**pbinom() function - gives the probability of getting on or below a specific value based on the given distribution parameters.**
+```{r}
+# Finding the probability of observing a count of exactly 3 successes in a binomial distribution with parameters n = 4 and p = 0.75.
+pbinom(3, size = 4, prob = 0.75)
+```
+
+**qbinom() function - gives the specified quantile of a binomial distribution based on the given distribution parameters.**
+```{r}
+# Finding the 10th quantile of a binomial distribution with trials = 10 and p = 0.4
+qbinom(0.10, size = 10, prob = 0.4)
+```

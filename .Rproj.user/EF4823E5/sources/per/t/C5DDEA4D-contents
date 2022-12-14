@@ -1,0 +1,171 @@
+---
+title: "Using Models 2"
+author: "Jordan Smith"
+date: "2022-11-28"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# {.tabset}
+
+## Prep Work
+```{r}
+require(palmerpenguins)
+```
+
+**1-Sample T-Test**
+
+```{r}
+# T-Test of Gentoo flipper length with a null hypothesis that the average flipper length is 0 and an alternative hypothesis that the average flipper length is not 0.
+t.test(subset(penguins, species == "Gentoo")$flipper_length_mm)
+
+# T-Test of Gentoo flipper length with a null hypothesis that the average flipper length is 218 mm and an alternative hypothesis that the average flipper length is not 218 mm.
+t.test(x = subset(penguins, species == "Gentoo")$flipper_length_mm,
+       mu = 218)
+
+# One-tailed t-test of Gentoo flipper length with a null hypothesis that the average flipper length is 218 mm and an alternative hypothesis that the average flipper length is less than 218 mm.
+t.test(x = subset(penguins, species == "Gentoo")$flipper_length_mm,
+       mu = 218,
+       alternative = "less")
+```
+
+**2-Sample T-Test**
+
+```{r}
+# 2-sample t-test comparing the average flipper lengths of Gentoo and Chinstrap penguins with a null hypothesis that there is no significant difference in flipper lengths and an alternative hypothesis that there is a significant difference in flipper lengths.
+t.test(flipper_length_mm ~ species, data = subset(penguins, species != "Chinstrap"))
+```
+
+**1-Way ANOVA**
+
+1. Perform graphical and numerical data exploration.
+2. Fit a linear model using lm()
+3. Examine the model coefficient table using summary()
+4. Conduct the Analysis of Variance using anova()
+
+```{r}
+# Exploring Normality with Histograms and Density Plots
+par(mfrow = c(1,2))
+hist(penguins$body_mass_g, breaks = 80, main = "Histogram of Body Mass", xlab = "Body Mass (g)")
+plot(density(penguins$body_mass_g, na.rm = TRUE), main = "Density Plot of Body Mass")
+
+# Conditional Boxplots for Categorical Variables
+boxplot(body_mass_g ~ species, data = penguins, main = "Histogram of Body Mass", ylab = "Body Mass (g)", cex.axis = 0.9)
+```
+
+Testing for Normality 
+
+```{r}
+dat_chinstrap = subset(penguins, species = "Chinstrap")
+mean(dat_chinstrap$body_mass_g, na.rm = TRUE)
+
+# Using the Shapiro test to determine whether the data is drawn from a normally-distributed population
+shapiro.test(dat_chinstrap$body_mass_g)
+
+# Using aggregate() when we fail to reject the null in the Shapiro test
+aggregate(body_mass_g ~ species, 
+          data = penguins, 
+          FUN = mean)
+aggregate(body_mass_g ~ species,
+          data = penguins,
+          FUN = function(x) shapiro.test(x)$p.value)
+```
+
+Fitting to a Linear Model
+
+```{r}
+fit_species = lm(body_mass_g ~ species, data = penguins)
+summary(fit_species)
+```
+
+Conducting the ANOVA
+
+```{r}
+anova(fit_species)
+# Degrees of Freedom: represents the number of levels within a categorical variable
+# Sum of Squares: describes the total data variability explained by each predictor variable. Total sum squares measures the total variability.
+# Mean Squares: allows for comparing the relative amount of information that each factor explains. (Is the sum sq but adjusted by the DOF)
+# F-Statistic/P-Value: Is a measure of how much adding a variable to tehmodel improves the model fit
+```
+
+**2-Way Additive ANOVA**
+
+```{r}
+boxplot(body_mass_g ~ species, data = penguins)
+
+boxplot(body_mass_g ~ sex + species, data = penguins)
+```
+
+Fitting a 2-Way Additive ANOVA
+
+```{r}
+fit_additive = lm(body_mass_g ~ sex + species, data = penguins)
+summary(fit_additive)
+anova(fit_additive)
+```
+
+**2-Way Interactive(Factorial) ANOVA**
+
+```{r}
+fit_interactive = lm(body_mass_g ~ sex * species, data = penguins)
+summary(fit_interactive)
+anova(fit_interactive)
+```
+
+**Simple Linear Regression: Penguin Bills and Body Mass**
+
+```{r}
+lm(bill_length_mm ~ body_mass_g, data = penguins)
+```
+
+## Questions 1 - 3
+**1. Re-create the conditional boxplot of penguin body mass conditioned on sex and species. Include your boxplot as a figure in your report**
+
+```{r}
+penguin_names = c("Female Adelie", "Male Adelie", "Female Chinstrap", "Male Chinstrap", "Female Gentoo", "Male Gentoo")
+boxplot(body_mass_g ~ sex + species, 
+        data = penguins,names = penguin_names, 
+        main = "Boxplot of Penguin Body Mass Conditioned on Sex and Species", 
+        xlab = "Sex:Species", 
+        ylab = "Body Mass (g)", 
+        cex.axis = 0.8)
+```
+
+**2. Based on the boxplots, do you think male penguins are significantly heavier than female penguins of the same species? Explain your reasoning, and be sure to explain why you think any observed differences are significant or not.**
+Just based on the boxplots, I think there is at least a significant difference in the male and female weights of the Gentoo and Adelie penguins since there is no overlap between their interquartile ranges.
+
+**3. Do you think adding sex to a model that already includes species will improve the model fit?**
+Based on the boxplots, adding sex does improve the model fit since it is not a complex parameter and it gives insight towards more specific trends in the data.
+
+## Questions 4 - 5
+**4. Show the R-code you used to build fit_both**
+
+```{r}
+fit_both = lm(body_mass_g ~ sex * species, data = penguins)
+```
+
+**5. What is the base case for the 2-way model that includes sex and species?**
+The base case is 3368.84, which describes the y-intercept
+
+## Questions 6 - 8
+
+```{r}
+summary(fit_both)
+```
+
+**6. What are the names of the two coefficients (from the first column of the coefficient table) that you need to calculate the average mass of female Chinstrap penguins?**
+You will need the Intercept and speciesChinstrap
+
+**7. What is the predicted average mass of female Chinstrap penguins in the interactive model?**
+The predicted average female mass is 3210.46
+
+**8. What is the observed average mass of female Chinstrap penguins, calculated from the penguins data?**
+
+```{r}
+penguins_f = droplevels(subset(penguins, sex == "female"))
+penguins_f_chin = droplevels(subset(penguins_f, species == "Chinstrap"))
+mean(penguins_f_chin$body_mass_g)
+```

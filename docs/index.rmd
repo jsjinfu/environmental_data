@@ -9,4 +9,8 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-Jordan's Project Page
+Jordan's Project Page.
+
+```{r}
+ (final_R_reference.html)
+```

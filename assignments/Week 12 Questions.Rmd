@@ -1,0 +1,21 @@
+---
+title: "Week 12 Questions"
+author: "Jordan Smith"
+date: "2022-11-28"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# {.tabset}
+
+## Question 1
+When deciding between a dataset that has a lot of variables but a reduced amount of unknown variation, a figure modeling that information leads to confusion by those who aren't familiar with the parameters. This may cause an incorrect interpretation of data that could be broken up into many smaller figures describing a reduced amount of information at one time.
+
+When considering a model with only a few parameters, it is much easier to understand but it may represent real-world data in a way that does not tell the whole story and overlooks essential explanatory variables that may greatly water-down the interactions that are actually occurring. 
+
+An example of this can be shown with experiments done on the effects of various rates of fertilizer application on a certain crop. If you were to only plot rate of fertilizer vs increased growth, you would be ignoring factors such as the nutrient availability in the soil or different light intensities of each expeirmental plot while if you were to plot all of those parameters in one figure, it would be difficult to see specific trends between each one. 
+
+## Question 2

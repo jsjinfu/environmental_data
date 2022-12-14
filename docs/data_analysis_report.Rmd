@@ -1,0 +1,256 @@
+---
+title: "data_analysis_report"
+author: "Jordan Smith"
+date: "2022-12-05"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Data Analysis Report {.tabset .tabset-pills}
+
+## Numerical and Graphical Exploration (Questions 1-4)
+
+```{r}
+require(here)
+
+# Bringing the delomys data set to R
+delomys_data = read.csv(here("data", "delomys.csv"))
+
+# Renaming the body mass and body length columns for analysis
+delomys_body_mass = delomys_data$body_mass
+delomys_body_length = delomys_data$body_length
+
+# Retrieving the summary data for delomys body mass and length
+summary(delomys_body_mass)
+summary(delomys_body_length)
+
+# Performing a normality test on the delomys body mass and length columns
+shapiro.test(delomys_body_mass)
+shapiro.test(delomys_body_length)
+```
+
+**A scatterplot of body mass and body length**
+```{r fig.width = 10, fig.height = 8}
+plot(delomys_body_length, delomys_body_mass,
+     main = "Scatterplot of Delomys Body Length and Body Mass",
+     xlab = "Body Length",
+     ylab = "Body Mass")
+```
+
+**A histogram of body mass**
+```{r}
+hist(delomys_body_mass,
+     main = "Histogram of Delomys Body Mass",
+     xlab = "Body Mass",
+     breaks = 20)
+```
+
+**A histogram of body length**
+```{r}
+hist(delomys_body_length,
+     main = "Histogram of Delomys Body Length",
+     xlab = "Body Length",
+     breaks = 20)
+```
+
+**A conditional boxplot of body mass, conditioned on species (column binomial)**
+```{r}
+boxplot(delomys_body_mass ~ delomys_data$binomial,
+        main = "Boxplot of Delomys Body Mass Condioned on Species",
+        xlab = "Species",
+        ylab = "Body Mass")
+```
+
+**A conditional boxplot of body mass, conditioned on sex**
+```{r}
+boxplot(delomys_body_mass ~ delomys_data$sex,
+        main = "Boxplot of Delomys Body Mass Conditioned on Sex",
+        xlab = "Sex",
+        ylab = "Body Mass")
+```
+
+**A conditional boxplot of body mass, conditioned on species and sex**
+```{r}
+delomys_names = c("D. dorsalis Female", "D. sublineatus Female", "D. dorsalis Male", "D. sublineatus Male")
+boxplot(delomys_body_mass ~ delomys_data$binomial + delomys_data$sex,
+        names = delomys_names,
+        main = "Boxplot of Delomys Body Mass Condioned on Species and Sex",
+        xlab = "Species + Sex",
+        ylab = "Body Mass",
+        cex.axis = 0.8)
+```
+
+**1. Qualitatively describe the relationship between body mass and length. Does the relationship seem linear, curved, nonexistant?**
+Looking at the scatterplot, there is a positive, slightly curved relationship between Delomys body length and mass where as body length increases, body mass increases by a factor of around 2.
+
+**2. Qualitatively describe the shapes of the histograms. Do the data appear normally-distributed? Explain why or why not.**
+The histogram of Delomys body mass does seem to be normally distributed since there is only one peak present and both sides are approximately symmetrical around the mean. The Delomys body length histogram is slightly skewed to the left since there seem to be many more data points to the left of the mean than to the right.
+
+**3. Using both the histograms and normality tests, do you think the (unconditioned) body masses and body length are normally-distributed? Contrast your visual assessment of normality to the results of the numerical normality tests.**
+
+- Shapiro Test of Delomys Body Mass: p-value = 4.33 e-05
+- Shapiro Test of Delomys Body Length: p-value = 2.2e-16
+
+Using the Shapiro Test for these two variables, there is significant evidence pointing to the conclusion that both the Delomys body mass and body length are not normally-distributed since the p-values for each are below the cutoff of 0.05.
+
+**4. Examine the conditional boxplots. Describe any graphical evidence you see for body mass differences based on species and/or sex.**
+Based solely on the boxplots, there seems to be a slight difference between the body mass of each species or sex individually since the means are very similar and the IQR has a large section of overlap. Looking at the boxplots conditioned on both species and sex, there is a little more of a difference between female D. dorsalis and female D. sublineatus. 
+
+## Model Building (Questions 5 - 6)
+```{r}
+#Simple linear regression: body_length ~ body_mass
+fit1 = lm(delomys_body_length ~ delomys_body_mass)
+summary(fit1)
+
+#1-Way ANOVA: body_mass ~ sex
+fit2 = lm(delomys_body_mass ~ delomys_data$sex)
+summary(fit2)
+anova(fit2)
+
+#1-Way ANOVA: body_mass ~ binomial
+fit3 = lm(delomys_body_mass ~ delomys_data$binomial)
+summary(fit3)
+anova(fit3)
+
+#2-Way Additive ANOVA: body_mass ~ sex + binomial
+fit4 = lm(delomys_body_mass ~ delomys_data$sex + delomys_data$binomial)
+summary(fit4)
+anova(fit4)
+
+#2-Way Factorial Anova: body_mass ~ sex * binomial
+fit5 = lm(delomys_body_mass ~ delomys_data$sex * delomys_data$binomial)
+summary(fit5)
+anova(fit5)
+```
+
+**Fitting the Residuals**
+
+```{r}
+#Histogram of the residuals of the simple linear regression of body length conditioned on body mass
+fit1_resid = residuals(fit1)
+hist(fit1_resid,
+     main = "Linear Regression",
+     xlab = "Residuals",
+     breaks = 50)
+
+#Histogram of the residuals of the 1-Way ANOVA of body mass conditioned on sex
+fit2_resid = residuals(fit2)
+hist(fit2_resid,
+     main = "1-Way ANOVA: Body Mass ~ Sex",
+     xlab = "Residuals",
+     breaks = 50)
+
+#Histogram of the residuals of the 1-Way ANOVA of body mass conditioned on species
+fit3_resid = residuals(fit3)
+hist(fit3_resid,
+     main = "1- Way ANOVA: Body Mass ~ Species",
+     xlab = "Residuals",
+     breaks = 50)
+
+#Histogram of the residuals of the 2-Way additive ANOVA of body mass conditioned on sex and species
+fit4_resid = residuals(fit4)
+hist(fit4_resid,
+     main = "2-Way Additive Anova: Body Mass ~ Sex + Species",
+     xlab = "Residuals",
+     breaks = 50)
+
+#Histogram of the residuals of the 2-Way factorial ANOVA of body mass conditioned on sex and species
+fit5_resid = residuals(fit5)
+hist(fit5_resid,
+     main = "2-Way Factorial ANOVA: Body Mass ~ Sex * Species",
+     breaks = 50)
+```
+
+**Running a Shapiro Test on the Residuals**
+
+```{r}
+#Normality test on linear regression (body length ~ body mass) residuals
+shapiro.test(fit1_resid)
+
+#Normality test on 1-Way ANOVA (body mass ~ sex) residuals
+shapiro.test(fit2_resid)
+
+#Normality test on 1-Way ANOVA (body mass ~ species) residuals
+shapiro.test(fit3_resid)
+
+#Normality test on 2-Way additive ANOVA (body mass ~ sex + species) residuals
+shapiro.test(fit4_resid)
+
+#Normality test on2-Way factorial ANOVA (body mass ~ sex * species) residuals
+shapiro.test(fit5_resid)
+```
+
+**5. What do you conclude about residual normality based on the numerical and graphical diagnostics?**
+Looking only at the graphical representation of the residuals, it seems like the data is relatively normal with a mean centered around 0 but the results of the ANOVA test all result in p-values under 0.05, giving significant evidence that the residuals are not normally-distributed.
+
+**6. Are violations of the normality assumption equally severe for all the models?**
+The violation to the normality assumption do not seem to be less severe for the residuals for the 1-Way ANOVA for body mass conditioned on sex.
+
+# Model Interpretation {.tabset .tabset-pills}
+```{r}
+#Linear Regression (body length ~ body mass)
+knitr::kable(coef(summary(fit1)))
+
+#1-Way ANOVA (body mass ~ sex)
+knitr::kable(coef(summary(fit2)))
+
+#1-Way ANOVA (body mass ~ species)
+knitr::kable(coef(summary(fit3)))
+
+#2-Way Additive ANOVA (body mass ~ sex + species)
+knitr::kable(coef(summary(fit4)))
+
+#2-Way Factorial ANOVA (body mass ~ sex * species)
+knitr::kable(coef(summary(fit5)))
+```
+
+## Simple Linear Regression (Questions 7 - 9)
+**7. What is the magnitude of the mass/length relationship?**
+The magnitude is 0.876.
+
+**8. What is the expected body length of an animal that weighs 100g?**
+The expected body length is 163.72.
+
+**9. What is the expected body length of an animal that weighs 0g?**
+The expected body length is 76.124.
+
+## Body Mass: Coefficient Tables (Questions 10 - 13)
+**10. What is the base level for sex?**
+The base level for sex is 42.71.
+
+**11. What is the base level for binomial?**
+The base level for binomial is 46.75.
+
+**12. Which sex is heavier? How do you know?**
+Delomys males are heavier since the summary of the body mass conditioned on sex data output that the male base case is 2.78 g heavier when compared to females.
+
+**13. Which species is heavier? How do you know?**
+D. dorsalis are heavier since the summary of the body mass conditioned on species output that D. sublineatus base case are 7.68 g lighter when compared to D. dorsalis. 
+
+## ANOVA Tables (Questions 14 - 16)
+**14. Are sex and species significant predictors for body mass?**
+Based on the ANOVA tables, sex and species do seem to be good predictors for body mass since both ANOVA tests on body mass conditioned on sex and species resulted in p-values below 0.05, showing statistically significant evidence that the averages are different.
+
+**15. Is there a significant interaction?**
+There is a significant interaction since the p-values for each of these ANOVA tests are below 0.05.
+
+**16. Examine the p-values for the main effects (sex and species) in all four of the ANOVA tables. Does the significance level of either main effect change very much among different models?**
+When looking at the ANOVA tables, it seems like those related to the relationship between body mass and sex are much larger than the ones looking at body mass and species, although both are well under 0.05. 
+
+# Model Comparison: Body Mass {.tabset .tabset-pills}
+```{r}
+AIC(fit2)
+AIC(fit3)
+AIC(fit4)
+AIC(fit5)
+```
+
+## Questions 17 - 18
+**17. Which two models have the lowest AIC?**
+The two models with the lowest AIC are the additive and factorial ANOVA tests conditioned on species and sex.
+
+**18. Which of the two models with the lowest AIC scores would you select? Explain your decision based on model fit and the complexity/understanding tradeoff.**
+I would select the factorial ANOVA test as the model because it describes the interactions of all the variables, and not just body mass/sex and body mass/species alone. Since there are only 3 different variables, the tradeoff between understanding and complexity is not terrible, allowing for a greater amount of data to be portrayed in one figure.
