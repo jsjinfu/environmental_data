@@ -11,6 +11,4 @@ knitr::opts_chunk$set(echo = TRUE)
 
 Jordan's Project Page.
 
-```{r}
- (final_R_reference.html)
-```
+[Final Project: R Reference Guide](final_R_reference.html)

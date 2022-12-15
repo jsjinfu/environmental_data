@@ -11,9 +11,9 @@
 
 <meta name="author" content="Jordan Smith" />
 
-<meta name="date" content="2022-11-28" />
+<meta name="date" content="2022-12-14" />
 
-<title>Jordan’s Project Homepage</title>
+<title>data_analysis_report_questions</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -356,16 +356,99 @@ display: none;
 
 
 
-<h1 class="title toc-ignore">Jordan’s Project Homepage</h1>
+<h1 class="title toc-ignore">data_analysis_report_questions</h1>
 <h4 class="author">Jordan Smith</h4>
-<h4 class="date">2022-11-28</h4>
+<h4 class="date">2022-12-14</h4>
 
 </div>
 
 
-<p>Jordan’s Project Page.</p>
-<p><a href="final_R_reference.html">Final Project: R Reference
-Guide</a></p>
+<p><strong>1. Qualitatively describe the relationship between body mass
+and length. Does the relationship seem linear, curved,
+nonexistant?</strong> Looking at the scatterplot, there is a positive,
+slightly curved relationship between Delomys body length and mass where
+as body length increases, body mass increases by a factor of around
+2.</p>
+<p><strong>2. Qualitatively describe the shapes of the histograms. Do
+the data appear normally-distributed? Explain why or why not.</strong>
+The histogram of Delomys body mass does seem to be normally distributed
+since there is only one peak present and both sides are approximately
+symmetrical around the mean. The Delomys body length histogram is
+slightly skewed to the left since there seem to be many more data points
+to the left of the mean than to the right.</p>
+<p><strong>3. Using both the histograms and normality tests, do you
+think the (unconditioned) body masses and body length are
+normally-distributed? Contrast your visual assessment of normality to
+the results of the numerical normality tests.</strong></p>
+<ul>
+<li>Shapiro Test of Delomys Body Mass: p-value = 4.33 e-05</li>
+<li>Shapiro Test of Delomys Body Length: p-value = 2.2e-16</li>
+</ul>
+<p>Using the Shapiro Test for these two variables, there is significant
+evidence pointing to the conclusion that both the Delomys body mass and
+body length are not normally-distributed since the p-values for each are
+below the cutoff of 0.05.</p>
+<p><strong>4. Examine the conditional boxplots. Describe any graphical
+evidence you see for body mass differences based on species and/or
+sex.</strong> Based solely on the boxplots, there seems to be a slight
+difference between the body mass of each species or sex individually
+since the means are very similar and the IQR has a large section of
+overlap. Looking at the boxplots conditioned on both species and sex,
+there is a little more of a difference between female D. dorsalis and
+female D. sublineatus.</p>
+<p><strong>5. What do you conclude about residual normality based on the
+numerical and graphical diagnostics?</strong> Looking only at the
+graphical representation of the residuals, it seems like the data is
+relatively normal with a mean centered around 0 but the results of the
+ANOVA test all result in p-values under 0.05, giving significant
+evidence that the residuals are not normally-distributed.</p>
+<p><strong>6. Are violations of the normality assumption equally severe
+for all the models?</strong> The violation to the normality assumption
+do not seem to be less severe for the residuals for the 1-Way ANOVA for
+body mass conditioned on sex.</p>
+<p><strong>7. What is the magnitude of the mass/length
+relationship?</strong> The magnitude is 0.876.</p>
+<p><strong>8. What is the expected body length of an animal that weighs
+100g?</strong> The expected body length is 163.72.</p>
+<p><strong>9. What is the expected body length of an animal that weighs
+0g?</strong> The expected body length is 76.124.</p>
+<p><strong>10. What is the base level for sex?</strong> The base level
+for sex is 42.71.</p>
+<p><strong>11. What is the base level for binomial?</strong> The base
+level for binomial is 46.75.</p>
+<p><strong>12. Which sex is heavier? How do you know?</strong> Delomys
+males are heavier since the summary of the body mass conditioned on sex
+data output that the male base case is 2.78 g heavier when compared to
+females.</p>
+<p><strong>13. Which species is heavier? How do you know?</strong> D.
+dorsalis are heavier since the summary of the body mass conditioned on
+species output that D. sublineatus base case are 7.68 g lighter when
+compared to D. dorsalis.</p>
+<p><strong>14. Are sex and species significant predictors for body
+mass?</strong> Based on the ANOVA tables, sex and species do seem to be
+good predictors for body mass since both ANOVA tests on body mass
+conditioned on sex and species resulted in p-values below 0.05, showing
+statistically significant evidence that the averages are different.</p>
+<p><strong>15. Is there a significant interaction?</strong> There is a
+significant interaction since the p-values for each of these ANOVA tests
+are below 0.05.</p>
+<p><strong>16. Examine the p-values for the main effects (sex and
+species) in all four of the ANOVA tables. Does the significance level of
+either main effect change very much among different models?</strong>
+When looking at the ANOVA tables, it seems like those related to the
+relationship between body mass and sex are much larger than the ones
+looking at body mass and species, although both are well under 0.05.</p>
+<p><strong>17. Which two models have the lowest AIC?</strong> The two
+models with the lowest AIC are the additive and factorial ANOVA tests
+conditioned on species and sex.</p>
+<p><strong>18. Which of the two models with the lowest AIC scores would
+you select? Explain your decision based on model fit and the
+complexity/understanding tradeoff.</strong> I would select the factorial
+ANOVA test as the model because it describes the interactions of all the
+variables, and not just body mass/sex and body mass/species alone. Since
+there are only 3 different variables, the tradeoff between understanding
+and complexity is not terrible, allowing for a greater amount of data to
+be portrayed in one figure.</p>
 
 
 
